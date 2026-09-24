@@ -1,0 +1,135 @@
+<html>
+
+<button onclick="grabSelectedPlayers()">Start Game</button>
+
+<p>Unselected Players:</p>
+<div id="unselected_players"></div>
+<p>Selected Players:</p>
+<data id="selected_players"></data>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.min.js"></script>
+
+<script>   
+    const unselectedPlayers = document.getElementById("unselected_players")
+    const selectedPlayers = document.getElementById("selected_players");
+
+
+
+    //Get data from supabase
+    const supabasePublicClient = supabase.createClient("https://iyjdvmakijurkkawpbcs.supabase.co", "sb_publishable_BrxNXQvwbZL70mkhLxlwHQ_nKAu8yw7");
+
+    grabPlayersFromMemory()
+    syncData()
+    let players = []
+
+    function syncData(){
+    (async () => {
+
+            const {data, error} = await supabasePublicClient.from("Money").select("*")
+
+            console.log(error)
+            console.log("Data")
+
+            players = data
+            if (data.length > 0) {
+                displayNames()
+            }
+
+
+    })()
+
+
+    }
+
+	function updateData(name, money){
+		
+		(async () => {
+
+			const {error} = await supabasePublicClient.from('money').update({ money: money }).eq('name', name)
+
+			console.log(error)
+			console.log("Updated")
+			
+			syncData();
+		})()
+
+	}
+	function createData(name, money){
+		
+		(async () => {
+			const { error } = await supabasePublicClient.from('money').insert({name: name, money: money })
+
+			syncData()
+		})()
+	}
+    //Data fetched
+
+    function grabPlayersFromMemory(){
+        old_players = JSON.parse(sessionStorage.getItem("active_players")) || []
+
+        for (let i = 0; i < old_players.length; i++) {
+            console.log("old player: " + old_players[i].name + " money: " + old_players[i].money);
+        }
+        
+        displayNames(old_players, selectedPlayers, "playerUnselected")
+
+    }
+
+    
+
+    function startTable(active_players){
+        console.log(active_players)
+        sessionStorage.setItem("active_players", JSON.stringify(active_players))
+        window.location.href = "table.html"
+    }
+    
+
+
+    function displayNames(players_to_display = players, targetElement = unselectedPlayers, targetMethod = "playerSelected") {
+        players_to_display.forEach(player => {
+            if (document.getElementById(player.name.toLowerCase())) {
+                return; // Skip if button already exists
+            }
+            console.log(player)
+            var player_button = document.createElement("button");
+            player_button.setAttribute("id", player.name.toLowerCase());
+            player_button.setAttribute("onClick", targetMethod + "('" + player.name + "')");//Skicka in namm till playerselected
+            player_button.innerHTML = player.name;
+            targetElement.appendChild(player_button);
+
+        });
+    }
+
+    function playerSelected(namn){
+        console.log("Player selected: " + namn);
+        const playerButton = document.getElementById(namn.toLowerCase());
+        console.log(playerButton)
+        playerButton.setAttribute("onClick", "playerUnselected('" + namn + "')");
+        selectedPlayers.appendChild(playerButton);
+    }
+
+    function playerUnselected(namn){
+        console.log("Player unselected: " + namn);
+        const playerButton = document.getElementById(namn.toLowerCase());
+        console.log(playerButton)
+        playerButton.setAttribute("onClick", "playerSelected('" + namn + "')");
+        unselectedPlayers.appendChild(playerButton);
+    }
+
+
+    function grabSelectedPlayers(){
+        console.log(players)
+        const selectedPlayerButtons = document.getElementById("selected_players").querySelectorAll("button");
+        const selectedPlayers = Array.from(selectedPlayerButtons).map(button => players.find(player => player.name === button.textContent));
+        console.log("Selected players:", selectedPlayers);
+        startTable(selectedPlayers)
+    }
+ 
+</script>
+
+
+
+
+
+</html>

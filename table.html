@@ -1,0 +1,159 @@
+<html>
+<h1 id="pot">Pot: 0</h1>
+<h1 id="playerName">Player Name</h1>
+<h2 id="playerMoney">Player Money</h2>
+
+<input type="number" step="10" id="betAmount" placeholder="Enter bet amount" value=0>
+<button onclick="bet(parseInt(document.getElementById('betAmount').value))">Bet</button>
+<button onclick="fold()">Fold</button>
+<button onclick="all_in()">All In</button>
+<button onclick="bet(0)">Check</button>
+<button onclick="bet(-2)">Call</button>
+
+<script>
+    var active_players = JSON.parse(sessionStorage.getItem("active_players")) || [];
+
+    //Runtrhrough every player and get their action
+
+    var pot = 0;
+    var current_bet = 0;
+
+    var current_player_i = 0;
+    var total_players_left = active_players.length;
+
+    var all_in_showdown = false;
+    var showdown_starter = null;
+
+    function bet(amount){
+        if (current_bet == -2) {
+            alert("all in forced");
+            return;
+        }
+        console.log("Current bet: " + amount);
+        if (amount == -2) {
+            all_in();
+            return;
+        }
+
+        if (amount >= active_players[current_player_i].money) {
+            all_in();
+            return;
+        } else if (amount < current_bet) {
+            alert("Du måste satsa minst " + current_bet);
+            return;_pl
+        }
+        active_players[current_player_i].money -= amount;
+        pot += amount;
+        current_bet = amount;     
+        active_players[current_player_i].bet = amount;   
+    
+        next_player();
+        updateDisplay();
+
+    }
+    function fold() {
+            active_players[current_player_i].bet = -1;
+            total_players_left--;
+            next_player();
+            updateDisplay();
+
+
+        }
+    function all_in() {
+        console.log(showdown_starter)
+        active_players[current_player_i].bet = active_players[current_player_i].money;
+        active_players[current_player_i].money = 0;
+        pot += active_players[current_player_i].bet;
+        current_bet = -1;
+        if (all_in_showdown == false) {
+            showdown_starter = current_player_i;
+            all_in_showdown = true;
+        }
+        console.log(showdown_starter)
+        next_player();
+        updateDisplay();
+    }
+
+    function next_round() {
+        alert("next runda");
+        console.log("Next round");
+
+        if (total_players_left <= 1) {
+            end_game();
+            return;
+        }
+
+        for (var i = 0; i < active_players.length; i++) {
+            if (active_players[i].bet != -1) {
+                active_players[i].bet = 0;
+            }
+        }
+
+        current_player_i = -1;
+        current_bet = 0;
+        next_player();
+    }
+    function next_player() {
+
+        if (total_players_left <= 1) {
+            end_game();
+            return;
+        }
+
+        current_player_i++;
+        console.log("showdown starter: " + showdown_starter)
+        console.log("Current player index: " + current_player_i);
+
+        if (current_player_i >= active_players.length) {
+            current_player_i = 0;
+        }
+        if (current_player_i == showdown_starter){
+            end_game()
+            return;
+        }
+        if (active_players[current_player_i].bet === -1 || active_players[current_player_i].money <= 0) {
+            console.log("Player " + active_players[current_player_i].name + " has folded or is broke. Skipping.");
+            next_player(); // Skip folded players
+        }
+        console.log("Current player index: " + current_player_i); 
+        console.log("current player bet: " + active_players[current_player_i].bet);
+        console.log("current bet: " + current_bet);
+
+
+        if (active_players[current_player_i].bet == current_bet && current_bet > 0) {
+            next_round();
+        }
+
+
+        updateDisplay();
+    }
+
+    function end_game() {
+        alert("Finished"); //Some buttons or smt
+        //Send to new site actually
+        sessionStorage.setItem("active_players", JSON.stringify(active_players));
+        sessionStorage.setItem("pot", pot);
+        window.location.href = "endgame.html";
+    }
+
+
+
+    function updateDisplay() {
+        document.getElementById('playerName').textContent = active_players[current_player_i].name;
+        document.getElementById('playerMoney').textContent = active_players[current_player_i].money;
+        document.getElementById('pot').textContent = 'Pot: ' + pot;
+    }
+
+    // Function to update the player's name and money
+    function displayPlayerInfo(name, money) {
+        document.getElementById('playerName').textContent = name;
+        document.getElementById('playerMoney').textContent = money;
+    }
+
+    updateDisplay(); // Initial display update
+
+
+
+</script>
+
+</html>

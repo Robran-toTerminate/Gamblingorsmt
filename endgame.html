@@ -1,0 +1,46 @@
+<html>
+
+<p>Choose a winner:</p>
+<div id="potential_winners"></div>
+
+<h1 id="pot">Pot: 0</h1>
+<h1 id="winner">Winner: </h1>
+<h1 id="winnerBalance">New Balance: 0</h1>
+
+<button onclick="window.location.href='index.html'">Reset</button>
+
+<script>
+    var active_players = JSON.parse(sessionStorage.getItem("active_players")) || [];
+    var pot = sessionStorage.getItem("pot") || 0;
+
+    displayNames()
+
+
+    console.log(active_players)
+
+    document.getElementById("pot").innerHTML = "Pot: " + pot;
+
+
+
+    function displayNames() {
+        active_players.forEach(player => {
+            if (document.getElementById(player.name.toLowerCase())) {
+                return; // Skip if button already exists
+            }
+            console.log(player)
+            var player_button = document.createElement("button");
+            player_button.setAttribute("id", player.name.toLowerCase());
+            player_button.setAttribute("onClick", "displayWinner('" + player.name + "')");
+            player_button.innerHTML = player.name;
+            document.getElementById("potential_winners").appendChild(player_button);
+
+        });
+    }
+
+    function displayWinner(winnerName) {
+        const winner = active_players.find(player => player.name === winnerName);
+        document.getElementById("winner").innerHTML = "Winner: " + winner.name;
+        document.getElementById("winnerBalance").innerHTML = "New Balance: " + (parseInt(winner.money) + parseInt(pot));
+    }
+</script>
+</html>

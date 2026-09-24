@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.min.js"></script>
+
+    <script>
+			const supabasePublicClient = supabase.createClient("https://iyjdvmakijurkkawpbcs.supabase.co", "sb_publishable_BrxNXQvwbZL70mkhLxlwHQ_nKAu8yw7");
+
+			syncData()
+
+			function syncData(){
+			(async () => {
+                
+					const {data, error} = await supabasePublicClient.from("Money").select("*")
+
+					console.log(data)
+					console.log(error)
+
+
+
+        })()
+
+
+			}
+
+
+    </script>
+</body>
+
+</html>
