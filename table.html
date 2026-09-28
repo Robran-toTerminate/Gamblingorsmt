@@ -1,16 +1,97 @@
 <html>
-<h1 id="pot">Pot: 0</h1>
-<h1 id="playerName">Player Name</h1>
-<h2 id="playerMoney">Player Money</h2>
+<head>
+    <style>
+        .leaderboard {
+            background-color: bisque;
+            width: 400;
+            height: auto;
+
+            position: absolute;
+            right: 50;
+        }
+
+        .leaderboardEntry {
+            background-color: antiquewhite;
+
+            text-align: center;
+        }
+
+        .buttons {
+            position: absolute;
+            left: 590;
 
 
-<input type="number" step="10" id="betAmount" placeholder="Enter bet amount" value=0>
-<button onclick="bet(parseInt(document.getElementById('betAmount').value))">Bet</button>
-<button onclick="fold()">Fold</button>
-<button onclick="all_in()">All In</button>
-<button onclick="bet(0)">Check</button>
-<button onclick="bet(-2)">Call</button>
+            button {
+                background-color: aqua;
+                width: 70;
+                height: 25;
+            }
+        }
 
+        .playerDisplay {
+            background-color:cadetblue;
+            width:fit-content;
+            min-width: 500;
+
+            position: absolute;
+            left: 50;
+        }
+
+
+        h1 {
+            font-size: 80;
+            text-align: center;
+        }
+        h2 {
+            font-size: 60;
+            text-align: center;
+        }
+
+        body {
+            background-image: url(https://singularityhub.com/uploads/2019/07/Casino-poker-chips-on-green-felt-background-artificial-intelligence-shutterstock-658269847.jpg?auto=webp&auto=webp&optimize=high&quality=70&width=1440);
+            background-size: cover;
+            background-color:green;
+        }
+
+
+    </style>
+</head>
+
+
+<body>
+
+<div id="leaderboard" class="leaderboard">Leaderboard
+
+    <p class="leaderboardEntry"> ,wdykuyqwgdkuyqwgdkuygwdkyguyg</p>
+    <p class="leaderboardEntry">iuhi</p>
+    <p class="leaderboardEntry">iuhi</p>
+    <p class="leaderboardEntry">iuhi</p>
+    <p class="leaderboardEntry">iuhi</p>
+    <p class="leaderboardEntry">iuhi</p>ß
+
+    
+</div>
+
+<div id="playerDisplay" class="playerDisplay">
+    <h1 id="playerName">Player Name</h1>
+    <h2 id="playerMoney">Player Money</h2>         .
+</div>
+
+<h2 id="betAmount" style="color: aliceblue; background-color: brown;">. Bet : 45688878</h2>
+<h2 id="pot" style="color: aliceblue; background-color: brown; margin-top: -40;">. Pot : 45688878</h2>
+
+<div class="buttons">
+    <button onclick="bet(parseInt(document.getElementById('betAmountInput').value))">Bet</button>
+    <button onclick="fold()">Fold</button>
+    <button onclick="all_in()">All In</button>
+    <button onclick="bet(0)">Check</button>
+    <button onclick="bet(-2)">Call</button>
+</div>
+
+<input type="number" step="10" id="betAmountInput" placeholder="Enter bet amount" value=0 style="position: absolute; left: 700; margin-top: 50;">
+
+
+</body>
 <script>
     var active_players = JSON.parse(sessionStorage.getItem("active_players")) || [];
 
@@ -142,7 +223,8 @@
     function updateDisplay() {
         document.getElementById('playerName').textContent = active_players[current_player_i].name;
         document.getElementById('playerMoney').textContent = active_players[current_player_i].money;
-        document.getElementById('pot').textContent = 'Pot: ' + pot;
+        document.getElementById('pot').textContent = '. Pot: ' + pot;
+        document.getElementById('betAmount').textContent = '. Bet: ' + current_bet;
     }
 
     // Function to update the player's name and money
